@@ -11,21 +11,16 @@ import (
 
 type tickMsg time.Time
 
-var choices = []string{"Start Game", "Quit"}
+// var choices = []string{"Start Game", "Quit"}
 
-func InitializeGame() {
+func InitializeGame(cfg Config) {
 	generalModel := GeneralModel{
+		WorldData: InitWorld(),
 		GameData: GameData{
 			Token:        nil,
-			CurrentState: StartPage,
+			CurrentState: cfg.GetGameState("startroom"),
 		},
-		UIData: UIData{
-			Style: lipgloss.NewStyle().Bold(true).
-				Foreground(lipgloss.Color("#FAFAFA")).
-				Background(lipgloss.Color("#040011")).
-				Align(lipgloss.Center).
-				PaddingTop(2),
-		},
+		UIData: UIData{},
 	}
 
 	p := tea.NewProgram(generalModel, tea.WithAltScreen())
@@ -53,18 +48,30 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "down", "s":
 			m.UIData.Cursor++
-			if m.UIData.Cursor >= len(choices) {
-				m.UIData.Cursor = len(choices) - 1
+			if m.UIData.Cursor >= len(m.WorldData.Rooms[m.GameData.CurrentState].Choices) {
+				m.UIData.Cursor = len(m.WorldData.Rooms[m.GameData.CurrentState].Choices) - 1
 			}
 		case "enter", "space":
-			// wip
-			m.GameData.CurrentState++
+			// no choices? always have move forward choice? what about last room
+			switch m.WorldData.Rooms[m.GameData.CurrentState].Choices[m.UIData.Cursor] {
+			case StartAction:
+				m.GameData.CurrentState++
+				if int(m.GameData.CurrentState) >= len(m.WorldData.Rooms) {
+					m.GameData.CurrentState--
+				}
+			case QuitAction:
+				return m, tea.Quit
+			default:
+				return m, nil
+			}
+
 		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
 		m.UIData.WindowWidth = msg.Width
 		m.UIData.WindowHeight = msg.Height
+		DefaultStyle.Width(msg.Width)
 	}
 
 	return m, nil
@@ -72,32 +79,30 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m GeneralModel) View() string {
 
-	s := ""
+	title := ""
+	content := ""
 	if m.GameData.CurrentState != StartPage {
-		s += "You are now at " + m.GameData.CurrentState.String() + "\n\n\n"
+		title += HeaderStyle.Render("You arrived now at " + m.WorldData.Rooms[m.GameData.CurrentState].Name + "\n")
+		content += m.WorldData.Rooms[m.GameData.CurrentState].Description + "\n\n\n"
 	}
-	for i := 0; i < len(choices); i++ {
-		if m.GameData.CurrentState != StartPage {
-			// wip
-			continue
-		}
+	for i, v := range m.WorldData.Rooms[m.GameData.CurrentState].Choices {
 		if m.UIData.Cursor == i && !m.UIData.Flicker {
-			s += "[•] "
+			content += "[•] "
 		} else {
-			s += "[ ] "
+			content += "[ ] "
 		}
-		s += choices[i]
-		s += "\n"
+		content += v.String()
+		content += "\n"
 	}
-	s = m.UIData.Style.Render(s)
+	content = DefaultStyle.Render(content)
 
 	return lipgloss.Place(
 		m.UIData.WindowWidth,
 		m.UIData.WindowHeight,
 		lipgloss.Center,
 		lipgloss.Center,
-		s,
-		lipgloss.WithWhitespaceBackground(m.UIData.Style.GetBackground()),
+		title+content,
+		lipgloss.WithWhitespaceBackground(DefaultStyle.GetBackground()),
 	)
 }
 

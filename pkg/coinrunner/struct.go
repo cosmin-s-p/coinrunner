@@ -1,7 +1,5 @@
 package coinrunner
 
-import "github.com/charmbracelet/lipgloss"
-
 type GeneralModel struct {
 	WorldData WorldData
 	GameData  GameData
@@ -16,8 +14,37 @@ type Room struct {
 	ID          GameState
 	Name        string
 	Description string
-	Choices     []string
+	Choices     []Choice
 	Creatures   []Creature
+	NextRoom    GameState
+}
+
+type Choice int
+
+const (
+	StartAction Choice = iota
+	QuitAction
+	MoveForwardAction
+	MoveBackwardAction
+	ScanAction
+	ShieldAction
+	IdentifyAction
+	StatusAction
+)
+
+func (c Choice) String() string {
+	return Choices[c]
+}
+
+var Choices = map[Choice]string{
+	StartAction:        "Start",
+	QuitAction:         "Quit",
+	MoveForwardAction:  "Move Forward",
+	MoveBackwardAction: "Move Backward",
+	ScanAction:         "Scan",
+	ShieldAction:       "Shield",
+	IdentifyAction:     "Identify",
+	StatusAction:       "Status",
 }
 
 type Creature struct {
@@ -28,6 +55,7 @@ type GameData struct {
 	Token           *Token
 	CurrentState    GameState
 	DialogueHistory map[GameState][]string
+	IsIdle          bool // more flags?
 }
 
 type UIData struct {
@@ -35,7 +63,6 @@ type UIData struct {
 	Cursor       int
 	WindowWidth  int
 	WindowHeight int
-	Style        lipgloss.Style
 }
 
 type Token struct {
@@ -54,6 +81,7 @@ const (
 	RiskEngineWoods
 	AcquirerPass
 	IssuerThrone
+	GameOver
 )
 
 func (s GameState) String() string {
@@ -67,4 +95,5 @@ var GameStates = map[GameState]string{
 	RiskEngineWoods: "Risk Engine Woods",
 	AcquirerPass:    "Acquirer Pass",
 	IssuerThrone:    "Issuer Throne",
+	GameOver:        "Game Over",
 }

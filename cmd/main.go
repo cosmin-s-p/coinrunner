@@ -4,5 +4,6 @@ import "coinrunner/pkg/coinrunner"
 
 func main() {
 
-	coinrunner.InitializeGame()
+	cfg := coinrunner.GetConfig()
+	coinrunner.InitializeGame(cfg)
 }
