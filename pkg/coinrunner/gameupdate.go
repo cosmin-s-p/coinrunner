@@ -10,9 +10,6 @@ import (
 func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case tickMsg:
-		m.UIData.Flicker = !m.UIData.Flicker
-		return m, flickerTickCmd()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "up", "w":
@@ -30,10 +27,6 @@ func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		}
-	case tea.WindowSizeMsg:
-		m = WindowSizeUpdate(m, msg)
-	case roomChangeMsg:
-		m = RoomChangeUIReset(m)
 	}
 
 	return m, cmd
@@ -42,9 +35,6 @@ func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 func StartRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
-	case tickMsg:
-		m.UIData.Flicker = !m.UIData.Flicker
-		return m, flickerTickCmd()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "up", "w":
@@ -62,10 +52,6 @@ func StartRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		}
-	case tea.WindowSizeMsg:
-		m = WindowSizeUpdate(m, msg)
-	case roomChangeMsg:
-		m = RoomChangeUIReset(m)
 	}
 
 	return m, cmd
@@ -75,9 +61,6 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
-	case tickMsg:
-		m.UIData.Flicker = !m.UIData.Flicker
-		return m, flickerTickCmd()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter", " ":
@@ -92,10 +75,6 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		case "esc", "ctrl+c":
 			return m, tea.Quit
 		}
-	case tea.WindowSizeMsg:
-		m = WindowSizeUpdate(m, msg)
-	case roomChangeMsg:
-		m = RoomChangeUIReset(m)
 	}
 
 	m.UIData.TextInput, cmd = m.UIData.TextInput.Update(msg)
