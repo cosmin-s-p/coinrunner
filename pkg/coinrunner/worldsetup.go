@@ -2,12 +2,12 @@ package coinrunner
 
 func InitWorld() WorldData {
 	return WorldData{
-		Rooms: []Room{
-			{
+		Rooms: map[GameState]Room{
+			StartPage: {
 				ID:          StartPage,
 				Name:        StartPage.String(),
 				Description: "",
-				Choices:     []Choice{StartAction, QuitAction},
+				Choices:     []Choice{StartAction, MoveForwardAction, QuitAction},
 				Creatures: []Creature{
 					{
 						Name: "",
@@ -16,48 +16,67 @@ func InitWorld() WorldData {
 						Name: "",
 					},
 				},
+				NextRoom:      ProloguePage,
+				HideSideViews: true,
 			},
-			{
+			ProloguePage: {
+				ID:            ProloguePage,
+				Name:          ProloguePage.String(),
+				Description:   "Before we begin, please insert below the last item you purchased online or your favorite item in general:",
+				Choices:       []Choice{MoveForwardAction},
+				Creatures:     []Creature{},
+				NextRoom:      MerchantGate,
+				HideSideViews: true,
+			},
+			MerchantGate: {
 				ID:          MerchantGate,
 				Name:        MerchantGate.String(),
 				Description: "You were just created, not my accident, but because someone \nreally really wanted to buy the latest <insert random product>",
-				Choices:     []Choice{MoveForwardAction},
+				Choices:     []Choice{MoveForwardAction, QuitAction},
 				Creatures:   []Creature{},
+				NextRoom:    GatewayBridge,
 			},
-			{
+			GatewayBridge: {
 				ID:          GatewayBridge,
 				Name:        GatewayBridge.String(),
 				Description: "You arrived at this fragile bridge crossing,\n can you go through or will your story end here?",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
+				NextRoom:    RiskEngineWoods,
 			},
-			{
+			RiskEngineWoods: {
 				ID:          RiskEngineWoods,
 				Name:        RiskEngineWoods.String(),
 				Description: "Misterious eyes are watching from afar.. they are analyzing your every move..",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
+				NextRoom:    AcquirerPass,
 			},
-			{
+			AcquirerPass: {
 				ID:          AcquirerPass,
 				Name:        AcquirerPass.String(),
 				Description: "A treacherous pass, will you go through, will you \nbe sent back, or will you be held here for a while?",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
+				NextRoom:    IssuerThrone,
 			},
-			{
-				ID:          IssuerThrone,
-				Name:        IssuerThrone.String(),
-				Description: "The FINAL destination. What will be the final answer?",
-				Choices:     []Choice{MoveForwardAction},
-				Creatures:   []Creature{},
+			IssuerThrone: {
+				ID:            IssuerThrone,
+				Name:          IssuerThrone.String(),
+				Description:   "The FINAL destination. What will be the final answer?",
+				Choices:       []Choice{MoveForwardAction},
+				Creatures:     []Creature{},
+				NextRoom:      GameOver,
+				HideSideViews: true,
 			},
-			{
-				ID:          GameOver,
-				Name:        GameOver.String(),
-				Description: "Press q to quit.",
-				Choices:     []Choice{MoveForwardAction},
-				Creatures:   []Creature{},
+			GameOver: {
+				ID:            GameOver,
+				Name:          GameOver.String(),
+				Description:   "Press q to quit.",
+				Choices:       []Choice{MoveForwardAction},
+				Creatures:     []Creature{},
+				NextRoom:      StartPage,
+				HideSideViews: true,
 			},
 		},
 	}

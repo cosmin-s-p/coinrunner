@@ -1,5 +1,7 @@
 package coinrunner
 
+import "github.com/charmbracelet/bubbles/textinput"
+
 type GeneralModel struct {
 	WorldData WorldData
 	GameData  GameData
@@ -7,16 +9,17 @@ type GeneralModel struct {
 }
 
 type WorldData struct {
-	Rooms []Room
+	Rooms map[GameState]Room
 }
 
 type Room struct {
-	ID          GameState
-	Name        string
-	Description string
-	Choices     []Choice
-	Creatures   []Creature
-	NextRoom    GameState
+	ID            GameState
+	Name          string
+	Description   string
+	Choices       []Choice
+	Creatures     []Creature
+	NextRoom      GameState
+	HideSideViews bool
 }
 
 type Choice int
@@ -56,6 +59,7 @@ type GameData struct {
 	CurrentState    GameState
 	DialogueHistory map[GameState][]string
 	IsIdle          bool // more flags?
+	FavoriteItem    string
 }
 
 type UIData struct {
@@ -63,6 +67,7 @@ type UIData struct {
 	Cursor       int
 	WindowWidth  int
 	WindowHeight int
+	TextInput    textinput.Model
 }
 
 type Token struct {
@@ -76,6 +81,7 @@ type GameState int
 
 const (
 	StartPage GameState = iota
+	ProloguePage
 	MerchantGate
 	GatewayBridge
 	RiskEngineWoods
@@ -90,6 +96,7 @@ func (s GameState) String() string {
 
 var GameStates = map[GameState]string{
 	StartPage:       "Start page",
+	ProloguePage:    "Prologue",
 	MerchantGate:    "Merchant Gate",
 	GatewayBridge:   "Gateway Bridge",
 	RiskEngineWoods: "Risk Engine Woods",
