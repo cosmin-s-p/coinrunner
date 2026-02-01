@@ -87,7 +87,7 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	return m, cmd
 }
 
-func RoomChangeUIReset(m GeneralModel, msg roomChangeMsg) GeneralModel {
+func RoomChangeUIReset(m GeneralModel, msg roomChangeMsg) (GeneralModel, tea.Cmd) {
 	m.UIData.Cursor = 0
 
 	if msg.NewRoom == ProloguePage {
@@ -98,9 +98,11 @@ func RoomChangeUIReset(m GeneralModel, msg roomChangeMsg) GeneralModel {
 		ti.Width = 20
 
 		m.UIData.TextInput = ti
+
+		return m, textinput.Blink
 	}
 
-	return m
+	return m, nil
 }
 
 func WindowSizeUpdate(m GeneralModel, msg tea.WindowSizeMsg) GeneralModel {

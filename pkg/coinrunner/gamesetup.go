@@ -35,6 +35,7 @@ func (m GeneralModel) Init() tea.Cmd {
 }
 
 func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	// common messages that apply to all rooms
 	switch msg := msg.(type) {
 	case tickMsg:
@@ -44,11 +45,11 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m = WindowSizeUpdate(m, msg)
 		return m, nil
 	case roomChangeMsg:
-		m = RoomChangeUIReset(m, msg)
-		return m, nil
+		m, cmd = RoomChangeUIReset(m, msg)
+		return m, cmd
 	}
 
-	// pick to the proper update method based on current game state
+	// pick the proper update method based on current game state
 	switch m.GameData.CurrentState {
 	case StartPage:
 		return StartRoomUpdate(m, msg)
