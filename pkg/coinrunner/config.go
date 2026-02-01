@@ -16,7 +16,8 @@ func GetConfig() Config {
 
 	v := viper.New()
 
-	v.SetDefault("startroom", StartPage)
+	v.SetDefault("start-room", StartPage)
+	v.SetDefault("title-height", 6)
 
 	return Config{v}
 }

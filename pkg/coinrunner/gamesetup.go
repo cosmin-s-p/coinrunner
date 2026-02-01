@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -12,9 +14,13 @@ func InitializeGame(cfg Config) {
 		WorldData: InitWorld(),
 		GameData: GameData{
 			Token:        nil,
-			CurrentState: cfg.GetGameState("startroom"),
+			CurrentState: cfg.GetGameState("start-room"),
 		},
-		UIData: UIData{},
+		UIData: UIData{
+			TextInput:   textinput.New(),
+			Viewport:    viewport.New(0, 0),
+			TitleHeight: cfg.GetInt("title-height"),
+		},
 	}
 
 	p := tea.NewProgram(generalModel, tea.WithAltScreen())
@@ -38,7 +44,7 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m = WindowSizeUpdate(m, msg)
 		return m, nil
 	case roomChangeMsg:
-		m = RoomChangeUIReset(m)
+		m = RoomChangeUIReset(m, msg)
 		return m, nil
 	}
 
@@ -61,5 +67,5 @@ func (m GeneralModel) View() string {
 		return RenderProloguePage(m)
 	}
 
-	return RenderStartPage(m)
+	return RenderRoom(m)
 }

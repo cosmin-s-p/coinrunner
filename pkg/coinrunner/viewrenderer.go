@@ -1,18 +1,60 @@
 package coinrunner
 
 import (
-	"strconv"
+	"coinrunner/pkg/helpers"
+	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
 )
 
-func RenderStartPage(m GeneralModel) string {
-	title := ""
-	content := ""
-	if m.GameData.CurrentState != StartPage {
-		title += HeaderStyle.Render("You arrived now at " + m.WorldData.Rooms[m.GameData.CurrentState].Name + "\n")
-		content += m.WorldData.Rooms[m.GameData.CurrentState].Description + "\n\n\n"
+func RenderRoom(m GeneralModel) string {
+	titleStyle := HeaderStyle.Width(m.UIData.WindowWidth).
+		Height(m.UIData.TitleHeight).
+		Padding(0)
+
+	sideWindowStyle := DefaultStyle.
+		Width(m.UIData.WindowWidth/4 - 2).
+		Height(m.UIData.WindowHeight - titleStyle.GetHeight()).
+		Padding(0).
+		Border(lipgloss.NormalBorder())
+	mainWindowStyle := DefaultStyle.
+		Width(m.UIData.WindowWidth/2 - 1).
+		Height(m.UIData.WindowHeight - titleStyle.GetHeight()).
+		Padding(0).
+		Border(lipgloss.NormalBorder())
+
+	title := titleStyle.Render("\n\n\n\nYou arrived now at " + m.WorldData.Rooms[m.GameData.CurrentState].Name + "\n")
+
+	leftWindow := ""
+	for i, v := range m.WorldData.Rooms[m.GameData.CurrentState].Choices {
+		if m.UIData.Cursor == i && !m.UIData.Flicker {
+			leftWindow += "[•] "
+		} else {
+			leftWindow += "[ ] "
+		}
+		leftWindow += v.String()
+		leftWindow += "\n"
 	}
+
+	leftWindow = sideWindowStyle.Render(leftWindow)
+
+	mainWindow := mainWindowStyle.Render(m.WorldData.Rooms[m.GameData.CurrentState].Description + "\n")
+
+	rightWindow := fmt.Sprintf("%s\n%s\n%s\n",
+		helpers.DialogueHistoryHeaderView(m.UIData.SidePanelWidth),
+		m.UIData.Viewport.View(),
+		helpers.DialogueHistoryFooterView(m.UIData.SidePanelWidth),
+	)
+
+	bottom := lipgloss.JoinHorizontal(lipgloss.Top, leftWindow, mainWindow, rightWindow)
+	content := lipgloss.JoinVertical(lipgloss.Left, title, bottom)
+
+	return content
+}
+
+func RenderStartPage(m GeneralModel) string {
+	title := HeaderStyle.Render(m.WorldData.Rooms[m.GameData.CurrentState].Description + "\n")
+	content := ""
 	for i, v := range m.WorldData.Rooms[m.GameData.CurrentState].Choices {
 		if m.UIData.Cursor == i && !m.UIData.Flicker {
 			content += "[•] "
@@ -22,9 +64,6 @@ func RenderStartPage(m GeneralModel) string {
 		content += v.String()
 		content += "\n"
 	}
-	content += "Favorite item: " + m.GameData.FavoriteItem + "\n"
-	content += "Cursor: " + strconv.Itoa(m.UIData.Cursor) + "\n"
-	content += "Cursor: " + strconv.FormatBool(m.UIData.Flicker) + "\n"
 	content = DefaultStyle.Render(content)
 
 	return lipgloss.Place(

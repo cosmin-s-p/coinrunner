@@ -2,6 +2,7 @@ package coinrunner
 
 import (
 	"coinrunner/pkg/helpers"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -27,7 +28,10 @@ func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		}
+	case dialogueUpdateMsg:
+		m.UIData.Viewport.SetContent(" \n" + strings.Join(m.GameData.DialogueHistory, "\n"))
 	}
+	m.UIData.Viewport, cmd = m.UIData.Viewport.Update(msg)
 
 	return m, cmd
 }
@@ -65,6 +69,7 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		switch msg.String() {
 		case "enter", " ":
 			m.GameData.FavoriteItem = m.UIData.TextInput.Value()
+			m.UIData.TextInput = textinput.New()
 
 			action := m.WorldData.Rooms[m.GameData.CurrentState].Choices[m.UIData.Cursor]
 
@@ -82,11 +87,10 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	return m, cmd
 }
 
-func RoomChangeUIReset(m GeneralModel) GeneralModel {
+func RoomChangeUIReset(m GeneralModel, msg roomChangeMsg) GeneralModel {
 	m.UIData.Cursor = 0
-	m.UIData.TextInput = textinput.New()
 
-	if m.GameData.CurrentState == ProloguePage {
+	if msg.NewRoom == ProloguePage {
 		ti := textinput.New()
 		ti.Placeholder = " "
 		ti.Focus()
@@ -103,6 +107,12 @@ func WindowSizeUpdate(m GeneralModel, msg tea.WindowSizeMsg) GeneralModel {
 
 	m.UIData.WindowWidth = msg.Width
 	m.UIData.WindowHeight = msg.Height
+	m.UIData.SidePanelWidth = m.UIData.WindowWidth / 4
+	m.UIData.SidePanelHeight = m.UIData.WindowHeight - m.UIData.TitleHeight
+
+	// also set viewport size
+	m.UIData.Viewport.Width = m.UIData.SidePanelWidth
+	m.UIData.Viewport.Height = m.UIData.SidePanelHeight
 
 	return m
 }

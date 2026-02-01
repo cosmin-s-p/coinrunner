@@ -20,3 +20,9 @@ func roomChangeCmd(o GameState, n GameState) tea.Cmd {
 		}
 	}
 }
+
+func dialogUpdateCmd() tea.Cmd {
+	return func() tea.Msg {
+		return dialogueUpdateMsg(true)
+	}
+}

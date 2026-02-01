@@ -8,3 +8,5 @@ type roomChangeMsg struct {
 	PreviousRoom GameState
 	NewRoom      GameState
 }
+
+type dialogueUpdateMsg bool

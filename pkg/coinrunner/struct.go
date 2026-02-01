@@ -1,6 +1,9 @@
 package coinrunner
 
-import "github.com/charmbracelet/bubbles/textinput"
+import (
+	"github.com/charmbracelet/bubbles/textinput"
+	"github.com/charmbracelet/bubbles/viewport"
+)
 
 type GeneralModel struct {
 	WorldData WorldData
@@ -57,17 +60,21 @@ type Creature struct {
 type GameData struct {
 	Token           *Token
 	CurrentState    GameState
-	DialogueHistory map[GameState][]string
+	DialogueHistory []string
 	IsIdle          bool // more flags?
 	FavoriteItem    string
 }
 
 type UIData struct {
-	Flicker      bool
-	Cursor       int
-	WindowWidth  int
-	WindowHeight int
-	TextInput    textinput.Model
+	Flicker         bool
+	Cursor          int
+	WindowWidth     int
+	WindowHeight    int
+	TitleHeight     int
+	SidePanelWidth  int
+	SidePanelHeight int
+	TextInput       textinput.Model
+	Viewport        viewport.Model
 }
 
 type Token struct {

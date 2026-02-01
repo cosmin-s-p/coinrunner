@@ -6,8 +6,8 @@ func InitWorld() WorldData {
 			StartPage: {
 				ID:          StartPage,
 				Name:        StartPage.String(),
-				Description: "",
-				Choices:     []Choice{StartAction, MoveForwardAction, QuitAction},
+				Description: "COINRUNNER",
+				Choices:     []Choice{StartAction, QuitAction},
 				Creatures: []Creature{
 					{
 						Name: "",
@@ -31,15 +31,15 @@ func InitWorld() WorldData {
 			MerchantGate: {
 				ID:          MerchantGate,
 				Name:        MerchantGate.String(),
-				Description: "You were just created, not my accident, but because someone \nreally really wanted to buy the latest <insert random product>",
-				Choices:     []Choice{MoveForwardAction, QuitAction},
+				Description: "You were just created, not by accident, but because someone really really wanted to buy the latest <insert random product>",
+				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
 				NextRoom:    GatewayBridge,
 			},
 			GatewayBridge: {
 				ID:          GatewayBridge,
 				Name:        GatewayBridge.String(),
-				Description: "You arrived at this fragile bridge crossing,\n can you go through or will your story end here?",
+				Description: "You arrived at this fragile bridge crossing, can you go through or will your story end here?",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
 				NextRoom:    RiskEngineWoods,
@@ -55,7 +55,7 @@ func InitWorld() WorldData {
 			AcquirerPass: {
 				ID:          AcquirerPass,
 				Name:        AcquirerPass.String(),
-				Description: "A treacherous pass, will you go through, will you \nbe sent back, or will you be held here for a while?",
+				Description: "A treacherous pass, will you go through, will you be sent back, or will you be held here for a while?",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
 				NextRoom:    IssuerThrone,
