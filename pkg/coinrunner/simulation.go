@@ -55,6 +55,7 @@ func InitializeRandomToken() Token {
 	}
 }
 
+// probably not needed and will do this through a command
 func SimulateParallelRequests() {
 
 	// create requests with random tokens for duplicate requests and velocity checks

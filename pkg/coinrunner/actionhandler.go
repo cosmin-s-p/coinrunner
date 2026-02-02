@@ -37,10 +37,15 @@ func HandleAction(g GameData, w WorldData, c Choice) (GameData, tea.Cmd) {
 			return g, nil
 		}
 
+		// trigger room change cmd
 		commands = append(commands, roomChangeCmd(g.CurrentState, w.Rooms[g.CurrentState].NextRoom))
+
+		// update game state
 		g.CurrentState = w.Rooms[g.CurrentState].NextRoom
 		g.IsIdle = true
 		g.CanMoveForward = true
+
+		// update dialogue history and trigger dialog update cmd
 		g.DialogueHistory = append(g.DialogueHistory, "\t> You arrived at "+g.CurrentState.String())
 		commands = append(commands, dialogUpdateCmd())
 

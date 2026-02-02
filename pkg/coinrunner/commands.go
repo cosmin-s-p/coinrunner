@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// used to show blinking cursor for choices
 func flickerTickCmd() tea.Cmd {
 	return tea.Tick(time.Millisecond*250, func(t time.Time) tea.Msg {
 		return tickMsg(t)
@@ -36,13 +37,14 @@ func canNotMoveForwardCmd() tea.Cmd {
 
 func spawnCreaturesCmd(creaturesAvailable []Creature) tea.Cmd {
 
+	// consider spawning a random creature from the ones available every 2 seconds
 	return func() tea.Msg {
 		time.Sleep(time.Second * 2)
 
 		randomCreature := creaturesAvailable[rand.IntN(len(creaturesAvailable))]
 		spawned := false
 
-		// in 60% of the cases
+		// consider it spawned in 60% of the cases
 		if rand.Float32()*100 < 60 {
 			spawned = true
 		}
@@ -53,7 +55,7 @@ func spawnCreaturesCmd(creaturesAvailable []Creature) tea.Cmd {
 
 func simulateParallelRequestsCmd() tea.Cmd {
 
-	// spawn a random creature from the ones available
+	// create a new random token every 2 seconds to simulate other requests being processed in parallel
 	return func() tea.Msg {
 		time.Sleep(time.Second * 2)
 

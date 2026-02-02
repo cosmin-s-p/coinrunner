@@ -42,7 +42,9 @@ func RetryAction(token Token, maxRetries int) {
 }
 
 type RateLimiter struct {
-	Last     time.Time
+	// last time the action happened
+	Last time.Time
+	// interval between actions
 	Interval time.Duration
 }
 

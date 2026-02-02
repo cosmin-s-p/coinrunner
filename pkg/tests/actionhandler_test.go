@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMoveForwardAction(t *testing.T) {
+func TestMoveForwardActionFromStartToPrologue(t *testing.T) {
 	token := coinrunner.InitializeRandomToken()
 
 	startState := coinrunner.StartPage
@@ -38,7 +38,7 @@ func TestMoveForwardAllCases(t *testing.T) {
 
 	startStates := coinrunner.GameStates
 
-	for state, _ := range startStates {
+	for state := range startStates {
 		gameData.CurrentState = state
 
 		g, _ := coinrunner.HandleAction(gameData, worldData, coinrunner.MoveForwardAction)

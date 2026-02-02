@@ -19,6 +19,7 @@ func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 			length := len(m.WorldData.Rooms[m.GameData.CurrentState].Choices)
 			m.UIData.Cursor = helpers.CursorIncrease(m.UIData.Cursor, length)
 		case "enter", " ":
+			// check player choice and do the corresponding action
 			action := m.WorldData.Rooms[m.GameData.CurrentState].Choices[m.UIData.Cursor]
 
 			m.GameData, cmd = HandleAction(m.GameData, m.WorldData, action)
@@ -29,8 +30,11 @@ func GameRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 			return m, tea.Quit
 		}
 	case dialogueUpdateMsg:
+		// update the scrollable viewport content
 		m.UIData.Viewport.SetContent(" \n" + strings.Join(m.GameData.DialogueHistory, "\n"))
 	}
+
+	// component specific update method
 	m.UIData.Viewport, cmd = m.UIData.Viewport.Update(msg)
 
 	return m, cmd
@@ -47,6 +51,7 @@ func StartRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 			length := len(m.WorldData.Rooms[m.GameData.CurrentState].Choices)
 			m.UIData.Cursor = helpers.CursorIncrease(m.UIData.Cursor, length)
 		case "enter", " ":
+			// check player choice and do the corresponding action
 			action := m.WorldData.Rooms[m.GameData.CurrentState].Choices[m.UIData.Cursor]
 
 			m.GameData, cmd = HandleAction(m.GameData, m.WorldData, action)
@@ -68,9 +73,11 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter", " ":
+			// save the text input to the game state and reset the input
 			m.GameData.FavoriteItem = m.UIData.TextInput.Value()
 			m.UIData.TextInput = textinput.New()
 
+			// check player choice and do the corresponding action
 			action := m.WorldData.Rooms[m.GameData.CurrentState].Choices[m.UIData.Cursor]
 
 			m.GameData, cmd = HandleAction(m.GameData, m.WorldData, action)
@@ -82,6 +89,7 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 		}
 	}
 
+	// component specific update method
 	m.UIData.TextInput, cmd = m.UIData.TextInput.Update(msg)
 
 	return m, cmd
@@ -90,6 +98,7 @@ func PrologueRoomUpdate(m GeneralModel, msg tea.Msg) (GeneralModel, tea.Cmd) {
 func RoomChangeUIReset(m GeneralModel, msg roomChangeMsg) (GeneralModel, tea.Cmd) {
 	m.UIData.Cursor = 0
 
+	// initialize text input upon entering the prologue page
 	if msg.NewRoom == ProloguePage {
 		ti := textinput.New()
 		ti.Placeholder = " "

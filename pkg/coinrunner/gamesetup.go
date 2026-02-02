@@ -69,6 +69,7 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m GeneralModel) View() string {
 
+	// pick the proper view method based on current game state
 	switch m.GameData.CurrentState {
 	case StartPage:
 		return RenderStartPage(m)
