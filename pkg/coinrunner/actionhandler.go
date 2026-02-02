@@ -5,24 +5,48 @@ import (
 )
 
 func HandleAction(g GameData, w WorldData, c Choice) (GameData, tea.Cmd) {
-	var cmd tea.Cmd
-	var updDiagCmd tea.Cmd
+	var commands []tea.Cmd
 
+	// special cases
 	if g.CurrentState == ProloguePage {
 		g.DialogueHistory = append(g.DialogueHistory, "\t> Somebody just bought: "+g.FavoriteItem)
-		updDiagCmd = dialogUpdateCmd()
+		commands = append(commands, dialogUpdateCmd())
 	} else if g.CurrentState != StartPage {
 		g.DialogueHistory = append(g.DialogueHistory, "\t> You chose to: "+c.String())
-		updDiagCmd = dialogUpdateCmd()
+		commands = append(commands, dialogUpdateCmd())
 	}
 
 	switch c {
-	case StartAction, MoveForwardAction:
-		cmd = roomChangeCmd(g.CurrentState, w.Rooms[g.CurrentState].NextRoom)
+	case StartAction:
+		commands = append(commands, roomChangeCmd(g.CurrentState, w.Rooms[g.CurrentState].NextRoom))
 		g.CurrentState = w.Rooms[g.CurrentState].NextRoom
+
+	case MoveForwardAction:
+		// check if action is possible; player must be idle and able to proceed
+		if !g.IsIdle || !g.CanMoveForward {
+			g.LatestDialogue = "\t> You cannot move forward at this time."
+			g.DialogueHistory = append(g.DialogueHistory, g.LatestDialogue)
+			commands = append(commands, dialogUpdateCmd())
+			return g, tea.Batch(commands...)
+		}
+
+		// check if this is a duplicate request
+		if CheckInMemoryData(*g.Token) {
+			g.CurrentState = GameOver
+			g.LatestDialogue = "\t> You are a duplicate token and have been terminated!."
+			return g, nil
+		}
+
+		commands = append(commands, roomChangeCmd(g.CurrentState, w.Rooms[g.CurrentState].NextRoom))
+		g.CurrentState = w.Rooms[g.CurrentState].NextRoom
+		g.IsIdle = true
+		g.CanMoveForward = true
+		g.DialogueHistory = append(g.DialogueHistory, "\t> You arrived at "+g.CurrentState.String())
+		commands = append(commands, dialogUpdateCmd())
+
 	case QuitAction:
-		cmd = tea.Quit
+		return g, tea.Quit
 	}
 
-	return g, tea.Batch(cmd, updDiagCmd)
+	return g, tea.Batch(commands...)
 }

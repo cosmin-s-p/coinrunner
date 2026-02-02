@@ -3,6 +3,7 @@ package coinrunner
 import (
 	"coinrunner/pkg/helpers"
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -38,7 +39,14 @@ func RenderRoom(m GeneralModel) string {
 
 	leftWindow = sideWindowStyle.Render(leftWindow)
 
-	mainWindow := mainWindowStyle.Render(m.WorldData.Rooms[m.GameData.CurrentState].Description + "\n")
+	mainContent := m.WorldData.Rooms[m.GameData.CurrentState].Description
+	if m.GameData.CurrentState == MerchantGate {
+		mainContent = strings.Replace(mainContent+"\n", "<insert-favorite-item>", m.GameData.FavoriteItem, 1)
+	}
+	if m.GameData.LatestDialogue != "" {
+		mainContent += "\n\n" + m.GameData.LatestDialogue + "\n"
+	}
+	mainWindow := mainWindowStyle.Render(mainContent)
 
 	rightWindow := fmt.Sprintf("%s\n%s\n%s\n",
 		helpers.DialogueHistoryHeaderView(m.UIData.SidePanelWidth),

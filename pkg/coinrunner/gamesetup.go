@@ -10,11 +10,14 @@ import (
 )
 
 func InitializeGame(cfg Config) {
+	token := InitializeRandomToken()
 	generalModel := GeneralModel{
 		WorldData: InitWorld(),
 		GameData: GameData{
-			Token:        nil,
-			CurrentState: cfg.GetGameState("start-room"),
+			Token:          &token,
+			CurrentState:   cfg.GetGameState("start-room"),
+			IsIdle:         true,
+			CanMoveForward: true,
 		},
 		UIData: UIData{
 			TextInput:   textinput.New(),
@@ -46,7 +49,12 @@ func (m GeneralModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case roomChangeMsg:
 		m, cmd = RoomChangeUIReset(m, msg)
+		// add cmd to spawn creatures
+		// if new room is merchant gate add command to start creating tokens
 		return m, cmd
+	case canNotMoveForwardMsg:
+		// just update the ui
+		return m, nil
 	}
 
 	// pick the proper update method based on current game state

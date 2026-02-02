@@ -1,6 +1,8 @@
 package coinrunner
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 )
@@ -59,9 +61,12 @@ type Creature struct {
 
 type GameData struct {
 	Token           *Token
+	IP              string
 	CurrentState    GameState
+	LatestDialogue  string
 	DialogueHistory []string
 	IsIdle          bool // more flags?
+	CanMoveForward  bool
 	FavoriteItem    string
 }
 
@@ -82,6 +87,7 @@ type Token struct {
 	RiskScore      int
 	PaidAmount     float32
 	SenderIp       string
+	Timestamp      time.Time
 }
 
 type GameState int

@@ -31,7 +31,7 @@ func InitWorld() WorldData {
 			MerchantGate: {
 				ID:          MerchantGate,
 				Name:        MerchantGate.String(),
-				Description: "You were just created, not by accident, but because someone really really wanted to buy the latest <insert random product>",
+				Description: "You were just created, not by accident, but because someone really really wanted to buy the latest <<insert-favorite-item>>",
 				Choices:     []Choice{MoveForwardAction},
 				Creatures:   []Creature{},
 				NextRoom:    GatewayBridge,
